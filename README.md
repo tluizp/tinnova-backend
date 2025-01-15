@@ -30,7 +30,7 @@ Apaga o veículo.
 ## Requisitos
 
 Certifique-se de ter os seguintes softwares instalados:
-- **Java 8 ou superior**
+- **Java 11**
 - **Gradle** (para gerenciar dependências e construir o projeto)
 - **IntelliJ IDEA Community** (ou qualquer IDE de sua escolha)
 
@@ -52,5 +52,5 @@ cd <NOME_DA_PASTA_DO_PROJETO>
 
 Use o Gradle para compilar e executar a aplicação.
 ```bash
-./gradlew bootRun.
+./gradlew bootRun
 ```
