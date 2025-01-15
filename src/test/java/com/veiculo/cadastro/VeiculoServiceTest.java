@@ -36,7 +36,7 @@ class VeiculoServiceTest {
 
         when(veiculoRepository.findAll()).thenReturn(List.of(veiculo));
 
-        List<Veiculo> resultado = veiculoService.listar("Volkswagen", 1980, "Azul");
+        List<Veiculo> resultado = veiculoService.list("Volkswagen", 1980, "Azul");
 
         assertEquals(1, resultado.size());
         assertEquals("Fusca", resultado.get(0).getVeiculo());
@@ -47,7 +47,7 @@ class VeiculoServiceTest {
     void buscarPor_comIdInexistenteDeveRetornarNotFound() {
         when(veiculoRepository.findById(1L)).thenReturn(Optional.empty());
 
-        ResponseEntity<?> resposta = veiculoService.buscarPor(1L);
+        ResponseEntity<?> resposta = veiculoService.findBy(1L);
 
         assertEquals(404, resposta.getStatusCodeValue());
         verify(veiculoRepository, times(1)).findById(1L);
@@ -58,7 +58,7 @@ class VeiculoServiceTest {
         Veiculo veiculo = new Veiculo(null, "Modelo", "MarcaInvalida", "Prata", 2021,
                 "Completo", Boolean.FALSE, LocalDateTime.now(), LocalDateTime.now());
 
-        ResponseEntity<?> resposta = veiculoService.salvar(veiculo);
+        ResponseEntity<?> resposta = veiculoService.save(veiculo);
 
         assertEquals(406, resposta.getStatusCodeValue());
         assertTrue(resposta.getBody().toString().contains("Marca nao encontrada"));
@@ -69,7 +69,7 @@ class VeiculoServiceTest {
         Veiculo veiculo = new Veiculo(null, "GT-R", "Nissan", "Black", 2014,
                 "3.8 V6 Bi-turbo", Boolean.FALSE, LocalDateTime.now(), LocalDateTime.now());
 
-        ResponseEntity<?> resultado = veiculoService.salvar(veiculo);
+        ResponseEntity<?> resultado = veiculoService.save(veiculo);
 
         assertTrue(resultado.hasBody());
         assertEquals(200, resultado.getStatusCodeValue());
@@ -86,7 +86,7 @@ class VeiculoServiceTest {
         when(veiculoRepository.findById(1L)).thenReturn(Optional.of(veiculoExistente));
         when(veiculoRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Optional<Veiculo> resultado = veiculoService.atualizar(1L, veiculoAtualizado);
+        Optional<Veiculo> resultado = veiculoService.update(1L, veiculoAtualizado);
 
         assertTrue(resultado.isPresent());
         assertEquals("Golf", resultado.get().getVeiculo());
@@ -97,7 +97,7 @@ class VeiculoServiceTest {
     void deletar_comIdExistenteDeveExcluir() {
         when(veiculoRepository.existsById(1L)).thenReturn(true);
 
-        ResponseEntity<Void> resposta = veiculoService.deletar(1L);
+        ResponseEntity<Void> resposta = veiculoService.delete(1L);
 
         assertEquals(204, resposta.getStatusCodeValue());
         verify(veiculoRepository, times(1)).deleteById(1L);
@@ -105,16 +105,16 @@ class VeiculoServiceTest {
 
     @Test
     void obterEstatisticas_deveRetornarDados() {
-        when(veiculoRepository.findVeiculosPorDecada()).thenReturn(List.<Object[]>of(new Object[]{1980, 10L}));
-        when(veiculoRepository.findVeiculosPorFabricante()).thenReturn(List.<Object[]>of(new Object[]{"Volkswagen", 5L}));
-        when(veiculoRepository.findVeiculosRegistradosNaUltimaSemana(any())).thenReturn(List.of());
-        when(veiculoRepository.findVeiculosNaoVendidos()).thenReturn(List.of());
+        when(veiculoRepository.findVehiclesByDecade()).thenReturn(List.<Object[]>of(new Object[]{1980, 10L}));
+        when(veiculoRepository.findVehiclesByManufacturer()).thenReturn(List.<Object[]>of(new Object[]{"Volkswagen", 5L}));
+        when(veiculoRepository.findVehiclesRegisteredInRelation(any())).thenReturn(List.of());
+        when(veiculoRepository.findUnsoldVehicles()).thenReturn(List.of());
 
-        Map<String, Object> estatisticas = veiculoService.obterEstatisticas();
+        Map<String, Object> estatisticas = veiculoService.getStatistics();
 
         assertNotNull(estatisticas.get("decadas"));
         assertNotNull(estatisticas.get("fabricantes"));
-        verify(veiculoRepository, times(1)).findVeiculosPorDecada();
+        verify(veiculoRepository, times(1)).findVehiclesByDecade();
     }
 }
 

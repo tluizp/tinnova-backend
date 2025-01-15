@@ -20,42 +20,42 @@ public class VeiculoController {
     }
 
     @GetMapping
-    public List<Veiculo> listarVeiculos(
+    public List<Veiculo> list(
             @RequestParam(required = false) String marca,
             @RequestParam(required = false) Integer ano,
             @RequestParam(required = false) String cor
     ) {
-        return veiculoService.listar(marca, ano, cor);
+        return veiculoService.list(marca, ano, cor);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> buscarVeiculo(@PathVariable Long id) {
-        return veiculoService.buscarPor(id);
+    public ResponseEntity<?> findById(@PathVariable Long id) {
+        return veiculoService.findBy(id);
     }
 
     @PostMapping
-    public ResponseEntity<?> salvarVeiculo(@RequestBody Veiculo veiculo) {
-        return veiculoService.salvar(veiculo);
+    public ResponseEntity<?> Save(@RequestBody Veiculo veiculo) {
+        return veiculoService.save(veiculo);
     }
 
     @PutMapping("/{id}")
-    public Optional<Veiculo> atualizarVeiculo(@PathVariable Long id, @RequestBody Veiculo veiculoAtualizado) {
-        return veiculoService.atualizar(id, veiculoAtualizado);
+    public Optional<Veiculo> update(@PathVariable Long id, @RequestBody Veiculo veiculoAtualizado) {
+        return veiculoService.update(id, veiculoAtualizado);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Veiculo> atualizarParcialVeiculo(@PathVariable Long id, @RequestBody Map<String, Object> campos) {
-        return veiculoService.atualizarParcial(id, campos);
+    public ResponseEntity<Veiculo> updatePartial(@PathVariable Long id, @RequestBody Map<String, Object> campos) {
+        return veiculoService.updatePartial(id, campos);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletarVeiculo(@PathVariable Long id) {
-        return veiculoService.deletar(id);
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        return veiculoService.delete(id);
     }
 
     @GetMapping("/estatisticas")
-    public Map<String, Object> obterEstatisticas() {
-        return veiculoService.obterEstatisticas();
+    public Map<String, Object> getStatistics() {
+        return veiculoService.getStatistics();
     }
 
 }

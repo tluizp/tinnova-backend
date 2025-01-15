@@ -2,6 +2,7 @@ package com.veiculo.cadastro.service;
 
 import com.veiculo.cadastro.dto.DecadaDTO;
 import com.veiculo.cadastro.dto.FabricanteDTO;
+import com.veiculo.cadastro.interfaces.IVeiculoService;
 import com.veiculo.cadastro.model.Marcas;
 import com.veiculo.cadastro.model.Veiculo;
 import com.veiculo.cadastro.repository.VeiculoRepository;
@@ -16,7 +17,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class VeiculoService {
+public class VeiculoService implements IVeiculoService {
 
     private final VeiculoRepository veiculoRepository;
 
@@ -24,7 +25,8 @@ public class VeiculoService {
         this.veiculoRepository = veiculoRepository;
     }
 
-    public List<Veiculo> listar(String marca, Integer ano, String cor) {
+    @Override
+    public List<Veiculo> list(String marca, Integer ano, String cor) {
         if (marca != null || ano != null || cor != null) {
             return veiculoRepository.findAll().stream()
                     .filter(veiculo -> (marca == null || veiculo.getMarca().equalsIgnoreCase(marca)) &&
@@ -35,7 +37,8 @@ public class VeiculoService {
         return veiculoRepository.findAll();
     }
 
-    public ResponseEntity<?> buscarPor(Long id) {
+    @Override
+    public ResponseEntity<?> findBy(Long id) {
         Optional<Veiculo> veiculo = veiculoRepository.findById(id);
         if (veiculo.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -44,7 +47,8 @@ public class VeiculoService {
         return ResponseEntity.ok(veiculo);
     }
 
-    public ResponseEntity<?> salvar(Veiculo veiculo) {
+    @Override
+    public ResponseEntity<?> save(Veiculo veiculo) {
         boolean present = false;
         if (Objects.nonNull(veiculo.getMarca())){
             present = Marcas.verificaMarca(veiculo.getMarca()).isPresent();
@@ -61,7 +65,8 @@ public class VeiculoService {
         return ResponseEntity.ok(veiculo);
     }
 
-    public Optional<Veiculo> atualizar(Long id, Veiculo veiculoAtualizado) {
+    @Override
+    public Optional<Veiculo> update(Long id, Veiculo veiculoAtualizado) {
         return veiculoRepository.findById(id).map(veiculo -> {
             veiculo.setVeiculo(veiculoAtualizado.getVeiculo());
             veiculo.setMarca(veiculoAtualizado.getMarca());
@@ -73,7 +78,8 @@ public class VeiculoService {
         });
     }
 
-    public ResponseEntity<Void> deletar(Long id) {
+    @Override
+    public ResponseEntity<Void> delete(Long id) {
         if (veiculoRepository.existsById(id)) {
             veiculoRepository.deleteById(id);
             return ResponseEntity.noContent().build();
@@ -81,18 +87,20 @@ public class VeiculoService {
         return ResponseEntity.notFound().build();
     }
 
-    public Map<String, Object> obterEstatisticas() {
-        Map<String, Object> estatisticas = new HashMap<>();
+    @Override
+    public Map<String, Object> getStatistics() {
+        Map<String, Object> statistics = new HashMap<>();
 
-        estatisticas.put("decadas", this.obterVeiculosPorDecada());
-        estatisticas.put("fabricantes", this.obterVeiculosPorFabricante());
-        estatisticas.put("ultimos7Dias", this.obterVeiculosRegistradosNaUltimaSemana());
-        estatisticas.put("naoVendidos", this.obterVeiculosNaoVendidos());
+        statistics.put("decadas", this.obterVeiculosPorDecada());
+        statistics.put("fabricantes", this.obterVeiculosPorFabricante());
+        statistics.put("ultimos7Dias", this.obterVeiculosRegistradosNaUltimaSemana());
+        statistics.put("naoVendidos", this.obterVeiculosNaoVendidos());
 
-        return estatisticas;
+        return statistics;
     }
 
-    public ResponseEntity<Veiculo> atualizarParcial(Long id, Map<String, Object> campos) {
+    @Override
+    public ResponseEntity<Veiculo> updatePartial(Long id, Map<String, Object> campos) {
         return veiculoRepository.findById(id).map(veiculo -> {
             campos.forEach((campo, valor) -> {
                 Field field = ReflectionUtils.findField(Veiculo.class, campo);
@@ -107,27 +115,27 @@ public class VeiculoService {
         }).orElse(ResponseEntity.notFound().build());
     }
 
-    public List<DecadaDTO> obterVeiculosPorDecada() {
-        return veiculoRepository.findVeiculosPorDecada()
+    private List<DecadaDTO> obterVeiculosPorDecada() {
+        return veiculoRepository.findVehiclesByDecade()
                 .stream()
                 .map(obj -> new DecadaDTO((int) obj[0], (long) obj[1]))
                 .collect(Collectors.toList());
     }
 
-    public List<FabricanteDTO> obterVeiculosPorFabricante() {
-        return veiculoRepository.findVeiculosPorFabricante()
+    private List<FabricanteDTO> obterVeiculosPorFabricante() {
+        return veiculoRepository.findVehiclesByManufacturer()
                 .stream()
                 .map(obj -> new FabricanteDTO((String) obj[0], (long) obj[1]))
                 .collect(Collectors.toList());
     }
 
-    public List<Veiculo> obterVeiculosRegistradosNaUltimaSemana() {
+    private List<Veiculo> obterVeiculosRegistradosNaUltimaSemana() {
         LocalDateTime seteDiasAtras = LocalDateTime.now().minusDays(7);
-        return veiculoRepository.findVeiculosRegistradosNaUltimaSemana(seteDiasAtras);
+        return veiculoRepository.findVehiclesRegisteredInRelation(seteDiasAtras);
     }
 
-    public List<Veiculo> obterVeiculosNaoVendidos() {
-        return veiculoRepository.findVeiculosNaoVendidos();
+    private List<Veiculo> obterVeiculosNaoVendidos() {
+        return veiculoRepository.findUnsoldVehicles();
     }
 
 }

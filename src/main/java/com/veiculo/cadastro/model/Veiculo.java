@@ -22,6 +22,8 @@ public class Veiculo {
     private LocalDateTime created;
     private LocalDateTime updated;
 
+    public Veiculo() {}
+
     public Veiculo(Long id, String veiculo, String marca, String cor, Integer ano, String descricao,
                    Boolean vendido, LocalDateTime created, LocalDateTime updated) {
         this.id = id;
