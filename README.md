@@ -30,7 +30,7 @@ Apaga o veículo.
 ## Requisitos
 
 Certifique-se de ter os seguintes softwares instalados:
-- **Java 8 ou superior**
+- **Java 11 ou superior**
 - **Gradle** (para gerenciar dependências e construir o projeto)
 - **IntelliJ IDEA Community** (ou qualquer IDE de sua escolha)
 
