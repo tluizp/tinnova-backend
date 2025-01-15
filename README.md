@@ -52,5 +52,5 @@ cd <NOME_DA_PASTA_DO_PROJETO>
 
 Use o Gradle para compilar e executar a aplicação.
 ```bash
-./gradlew bootRun.
+./gradlew bootRun
 ```
