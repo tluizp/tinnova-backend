@@ -1,7 +1,7 @@
 package com.veiculo.cadastro.controller;
 
+import com.veiculo.cadastro.interfaces.IVeiculoService;
 import com.veiculo.cadastro.model.Veiculo;
-import com.veiculo.cadastro.service.VeiculoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,9 +13,9 @@ import java.util.Optional;
 @RequestMapping("/veiculos")
 public class VeiculoController {
 
-    private final VeiculoService veiculoService;
+    private final IVeiculoService veiculoService;
 
-    public VeiculoController(VeiculoService veiculoService) {
+    public VeiculoController(IVeiculoService veiculoService) {
         this.veiculoService = veiculoService;
     }
 
